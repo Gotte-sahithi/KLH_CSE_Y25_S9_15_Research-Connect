@@ -1,0 +1,101 @@
+public class RabinKarp {
+
+    public static int search(
+            String text,
+            String pattern) {
+
+        int n = text.length();
+        int m = pattern.length();
+
+        if (m == 0) {
+            return 0;
+        }
+
+        if (m > n) {
+            return -1;
+        }
+
+        long base = 256;
+        long mod = 1000000007;
+
+        long patternHash = 0;
+        long textHash = 0;
+        long highestPower = 1;
+
+        for (int i = 0; i < m - 1; i++) {
+
+            highestPower =
+                    (highestPower * base)
+                            % mod;
+        }
+
+        for (int i = 0; i < m; i++) {
+
+            patternHash =
+                    (
+                            patternHash * base
+                                    +
+                            pattern.charAt(i)
+                    ) % mod;
+
+            textHash =
+                    (
+                            textHash * base
+                                    +
+                            text.charAt(i)
+                    ) % mod;
+        }
+
+        for (int i = 0; i <= n - m; i++) {
+
+            if (patternHash == textHash) {
+
+                boolean match = true;
+
+                for (int j = 0; j < m; j++) {
+
+                    if (
+                            text.charAt(i + j)
+                                    !=
+                            pattern.charAt(j)
+                    ) {
+
+                        match = false;
+                        break;
+                    }
+                }
+
+                if (match) {
+
+                    return i;
+                }
+            }
+
+            if (i < n - m) {
+
+                textHash =
+                        (
+                                textHash
+                                        -
+                                text.charAt(i)
+                                        *
+                                highestPower
+                        ) % mod;
+
+                if (textHash < 0) {
+
+                    textHash += mod;
+                }
+
+                textHash =
+                        (
+                                textHash * base
+                                        +
+                                text.charAt(i + m)
+                        ) % mod;
+            }
+        }
+
+        return -1;
+    }
+}
